@@ -42,7 +42,6 @@ function NavLink({ label, href }: { label: string; href: string }) {
       <motion.span
         animate={{
           opacity: isHovered ? 1 : 0,
-          blur: isHovered ? 0 : 10,
         }}
         transition={{ duration: 0.3 }}
         className="absolute -bottom-3 left-0 h-1 w-full bg-gradient-to-r from-cyan-400/40 to-emerald-400/20 blur-md -z-10"
