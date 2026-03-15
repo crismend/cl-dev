@@ -1,26 +1,133 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f7ff;
+  --foreground: #0f172a;
+  --accent: #06b6d4;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(6, 182, 212, 0.28);
+  --card-hover: rgba(6, 182, 212, 0.15);
+  --muted: rgba(15, 23, 42, 0.5);
+  --cyan-text: #0771a0;
+  --cyan-text-soft: #0891b2;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --accent: #06b6d4;
+  --card-bg: rgba(6, 182, 212, 0.08);
+  --card-border: rgba(6, 182, 212, 0.15);
+  --card-hover: rgba(6, 182, 212, 0.15);
+  --muted: rgba(255, 255, 255, 0.5);
+  --cyan-text: #22d3ee;
+  --cyan-text-soft: #67e8f9;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", sans-serif;
 }
+
+/* Light mode: subtle background depth gradient */
+:root:not(.dark) body {
+  background-image:
+    radial-gradient(ellipse at 15% 8%, rgba(6, 182, 212, 0.09) 0%, transparent 52%),
+    radial-gradient(ellipse at 85% 92%, rgba(16, 185, 129, 0.07) 0%, transparent 52%);
+}
+
+/* Light mode: override cyan-400 for better contrast (#22d3ee → #0891b2) */
+:root:not(.dark) .text-cyan-400 {
+  color: #0891b2;
+}
+
+:root:not(.dark) .hover\:text-cyan-400:hover {
+  color: #0771a0;
+}
+
+:root:not(.dark) .group:hover .group-hover\:text-cyan-400 {
+  color: #0891b2;
+}
+
+/* Light mode: darken gradient title colors (cyan-400 #22d3ee → #0891b2, emerald-400 #34d399 → #059669) */
+:root:not(.dark) .from-cyan-400 {
+  --tw-gradient-from: #0891b2;
+}
+:root:not(.dark) .via-emerald-400 {
+  --tw-gradient-via: #059669;
+}
+:root:not(.dark) .to-cyan-400 {
+  --tw-gradient-to: #0891b2;
+}
+:root:not(.dark) .from-emerald-400 {
+  --tw-gradient-from: #059669;
+}
+:root:not(.dark) .to-emerald-400 {
+  --tw-gradient-to: #059669;
+}
+
+/* Light mode: standalone text color fixes for better contrast */
+:root:not(.dark) .text-emerald-400 {
+  color: #059669;
+}
+:root:not(.dark) .text-indigo-400 {
+  color: #4f46e5;
+}
+:root:not(.dark) .text-green-400 {
+  color: #16a34a;
+}
+:root:not(.dark) .text-cyan-500 {
+  color: #0891b2;
+}
+
+/* Light mode: badges and labels more visible */
+:root:not(.dark) .bg-cyan-500\/10 {
+  background-color: rgba(6, 182, 212, 0.13);
+}
+
+:root:not(.dark) .border-cyan-500\/20 {
+  border-color: rgba(6, 182, 212, 0.32);
+}
+
+:root:not(.dark) .border-cyan-500\/30 {
+  border-color: rgba(6, 182, 212, 0.42);
+}
+
+/* Light mode: card depth */
+:root:not(.dark) .stack-card,
+:root:not(.dark) .highlight-card,
+:root:not(.dark) .stat-card {
+  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+::selection {
+  background-color: #06b6d4;
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #06b6d4;
+  border-radius: 3px;
+}
+
+@source "../components/**/*.tsx";
+@source "../app/**/*.tsx";
