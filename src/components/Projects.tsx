@@ -27,6 +27,7 @@ interface Project {
   gradient: string;
   glowInner: string;
   glowOuter: string;
+  featured?: boolean;
 }
 
 interface ProjectGroup {
@@ -40,6 +41,22 @@ const groups: ProjectGroup[] = [
     category: "Páginas Web",
     Icon: Globe,
     projects: [
+      {
+        title: "Suministros Morcuende",
+        description:
+          "Web completa de 12 páginas para empresa especialista en tejas y materiales de construcción en Toledo. Suministro directo a obra en toda España.",
+        image: "/images/projects/morcuende.png",
+        tags: ["Astro", "TailwindCSS", "12 páginas"],
+        demo: "https://demo-morcuende.vercel.app/",
+        badge: "Empresa",
+        badgeText: "text-amber-500",
+        badgeBg: "bg-amber-500/10 border-amber-500/30",
+        border: "border-amber-500/20",
+        gradient: "from-amber-500/12 via-amber-500/4 to-transparent",
+        glowInner: "rgba(245, 158, 11, 0.13)",
+        glowOuter: "rgba(245, 158, 11, 0.32)",
+        featured: true,
+      },
       {
         title: "Mujer en Dirección",
         description:
@@ -203,6 +220,179 @@ function Particle({ index }: { index: number }) {
         ease: "easeInOut",
       }}
     />
+  );
+}
+
+/* ─── Featured project card (horizontal, full-width) ───────────────────── */
+
+function FeaturedProjectCard({ project }: { project: Project }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rawRotX = useTransform(mouseY, [-0.5, 0.5], [5, -5]);
+  const rawRotY = useTransform(mouseX, [-0.5, 0.5], [-5, 5]);
+  const rotateX = useSpring(rawRotX, { stiffness: 180, damping: 24 });
+  const rotateY = useSpring(rawRotY, { stiffness: 180, damping: 24 });
+
+  const glowX = useTransform(mouseX, [-0.5, 0.5], ["0%", "100%"]);
+  const glowY = useTransform(mouseY, [-0.5, 0.5], ["0%", "100%"]);
+  const glowBg = useMotionTemplate`radial-gradient(circle at ${glowX} ${glowY}, ${project.glowInner}, transparent 60%)`;
+
+  function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  }
+
+  function onMouseLeave() {
+    mouseX.set(0);
+    mouseY.set(0);
+    setIsHovered(false);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 56, scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+      style={{ perspective: "1400px" }}
+      className="group w-full mb-8"
+    >
+      <motion.div
+        ref={cardRef}
+        style={{ rotateX, rotateY }}
+        whileHover={{ scale: 1.015 }}
+        animate={{
+          boxShadow: isHovered
+            ? `0 32px 72px ${project.glowOuter}55, 0 0 0 1.5px ${project.glowOuter}60`
+            : "0 6px 32px rgba(0,0,0,0.10)",
+        }}
+        transition={{
+          scale: { type: "spring", stiffness: 250, damping: 22 },
+          boxShadow: { duration: 0.4 },
+        }}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        onMouseEnter={() => setIsHovered(true)}
+        className={`relative rounded-3xl border ${project.border} overflow-hidden flex flex-col md:flex-row`}
+      >
+        {/* Static gradient */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient}`} />
+
+        {/* Cursor glow */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: glowBg }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.35 }}
+        />
+
+        {/* ── Image — left column on md+ ── */}
+        <div className="relative md:w-[52%] h-56 md:h-auto shrink-0 overflow-hidden">
+          <Image
+            src={project.image}
+            alt={`Preview de ${project.title}`}
+            fill
+            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 52vw"
+            priority
+          />
+          {/* Fade right (blends into content on desktop) */}
+          <div
+            className="absolute inset-0 pointer-events-none hidden md:block"
+            style={{
+              background:
+                "linear-gradient(to right, transparent 60%, var(--background))",
+            }}
+          />
+          {/* Fade bottom (mobile) */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none md:hidden"
+            style={{
+              background:
+                "linear-gradient(to top, var(--background), transparent)",
+            }}
+          />
+        </div>
+
+        {/* ── Content — right column ── */}
+        <div className="relative z-10 flex flex-col justify-center gap-5 px-8 py-8 md:py-10 flex-1">
+          {/* Badges row */}
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs font-bold font-mono tracking-wide px-3 py-1.5 rounded-full border bg-cyan-500/15 border-cyan-500/40 text-cyan-400 flex items-center gap-1.5">
+              <span>⭐</span> Featured
+            </span>
+            <span
+              className={`text-xs font-bold font-mono tracking-wide px-3 py-1.5 rounded-full border backdrop-blur-md ${project.badgeBg} ${project.badgeText}`}
+            >
+              {project.badge}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-2xl md:text-3xl font-bold text-(--foreground) group-hover:text-amber-500 transition-colors duration-300 leading-snug">
+            {project.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-(--foreground)/65 text-base leading-relaxed">
+            {project.description}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs px-3 py-1.5 rounded-lg bg-(--foreground)/5 border border-(--foreground)/10 text-(--foreground)/55 font-mono transition-colors duration-200 group-hover:border-(--foreground)/20"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-(--foreground)/10 to-transparent" />
+
+          {/* Links */}
+          <div className="flex items-center gap-4">
+            {project.github && (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Ver código fuente en GitHub"
+                className="flex items-center gap-2 text-sm font-medium text-(--foreground)/50 hover:text-cyan-400 transition-colors duration-200"
+              >
+                <Github size={16} />
+                <span>Código</span>
+              </a>
+            )}
+            <motion.a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-400 text-white hover:shadow-lg hover:shadow-amber-500/30 dark:hover:shadow-amber-500/20 transition-all duration-300"
+            >
+              <span>Ver proyecto</span>
+              <motion.span
+                animate={isHovered ? { x: [0, 3, 0] } : {}}
+                transition={{ repeat: Infinity, duration: 1.3 }}
+              >
+                <ExternalLink size={14} />
+              </motion.span>
+            </motion.a>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -424,15 +614,24 @@ function CategorySection({
         />
       </div>
 
-      {/* Cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {group.projects.map((project, i) => (
-          <ProjectCard
-            key={project.title}
-            project={project}
-            index={groupIndex * 10 + i}
-          />
+      {/* Featured card (full width) */}
+      {group.projects
+        .filter((p) => p.featured)
+        .map((p) => (
+          <FeaturedProjectCard key={p.title} project={p} />
         ))}
+
+      {/* Regular cards grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {group.projects
+          .filter((p) => !p.featured)
+          .map((project, i) => (
+            <ProjectCard
+              key={project.title}
+              project={project}
+              index={groupIndex * 10 + i}
+            />
+          ))}
       </div>
     </motion.div>
   );

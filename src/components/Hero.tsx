@@ -108,11 +108,10 @@ function CTAButton({
 
       <a
         href={href}
-        className={`relative inline-flex items-center justify-center px-8 md:px-10 py-3 md:py-4 rounded-full font-semibold transition-all duration-300 group ${
-          variant === "primary"
+        className={`relative inline-flex items-center justify-center px-8 md:px-10 py-3 md:py-4 rounded-full font-semibold transition-all duration-300 group ${variant === "primary"
             ? "bg-gradient-to-r from-cyan-500 to-emerald-500 text-white hover:shadow-lg hover:shadow-cyan-500/40"
             : "border border-cyan-500/40 hover:border-cyan-500 text-(--foreground) hover:bg-cyan-500/10 backdrop-blur-sm"
-        }`}
+          }`}
       >
         <motion.span
           animate={{ x: isHovered ? 4 : 0 }}
@@ -260,8 +259,8 @@ export function Hero() {
           className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 backdrop-blur-sm"
         >
           <p className="text-sm md:text-base font-mono font-medium" style={{ color: "var(--cyan-text)" }}>
-  Soluciones digitales innovadoras
-</p>
+            Soluciones digitales innovadoras
+          </p>
         </motion.div>
 
         {/* Typewriter effect */}
@@ -273,7 +272,7 @@ export function Hero() {
         >
           <div className="relative px-6 py-2 rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 backdrop-blur-sm">
             <span className="text-lg md:text-2xl font-mono font-semibold"
-style={{ color: "var(--cyan-text)" }}>
+              style={{ color: "var(--cyan-text)" }}>
               {displayText}
               <motion.span
                 animate={{ opacity: [1, 0] }}
